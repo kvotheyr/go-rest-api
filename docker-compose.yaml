@@ -1,0 +1,37 @@
+version: '3'
+services:
+  app:
+    container_name: go-rest-api
+    build: .
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    networks:
+      - fullstack
+
+  mysql:
+     image: mysql:8
+     container_name: mysql_db
+     ports:
+       - "3306:3306"
+     environment:
+       - MYSQL_ROOT_HOST=mysql
+       - MYSQL_USER=test
+       - MYSQL_PASSWORD=root
+       - MYSQL_DATABASE=rest-db
+       - MYSQL_ROOT_PASSWORD=root
+     volumes:
+       - mysql_db:/var/lib/mysql
+     networks:
+       - fullstack
+
+volumes:
+  mysql_db:
+
+networks:
+  fullstack:
+    driver: bridge
