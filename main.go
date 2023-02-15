@@ -9,6 +9,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go-rest-api/internal/routes"
+	"go-rest-api/pkg/db"
 )
 
 func main() {
@@ -17,7 +19,12 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/", helloWorld)
+	err := db.Init()
+	if err != nil {
+		e.Logger.Fatal(err, "Db init failed")
+	}
+
+	routes.Attach(e)
 
 	// Start server
 	go func() {
@@ -36,8 +43,4 @@ func main() {
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	}
-}
-
-func helloWorld(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
 }
